@@ -1,0 +1,158 @@
+#!/usr/bin/env python
+
+import argparse
+
+import hsluv
+
+import colorimetry.config.color
+import colorimetry.color
+import colorimetry.preset
+import colorimetry.utility
+
+_DESCRIPTION = \
+    "Print information about the given color, the general color that it " \
+    "matches to, and all intermediate info."
+
+def _get_args():
+    parser = \
+        argparse.ArgumentParser(
+            description=_DESCRIPTION)
+
+    colorimetry.utility.register_common_parameters(parser)
+
+    parser.add_argument(
+        'query_hex',
+        help="Hex phrase to compare")
+
+    parser.add_argument(
+        '--preset-color-name',
+        help="Name of preset color to compare to")
+
+    args = parser.parse_args()
+    return args
+
+def _main():
+    args = _get_args()
+
+    colorimetry.utility.handle_common_arguments(args)
+
+
+    # Print HSLuv components
+
+    query_rgb_tuple_int = \
+        colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(
+            args.query_hex)
+
+    query_hsluv_tuple = \
+        colorimetry.color.get_hsluv_tuple_with_rgb_tuple_int(
+            query_rgb_tuple_int)
+
+    print("Query: {} -> RGB {} -> HSLuv {}".format(
+          args.query_hex, query_rgb_tuple_int, query_hsluv_tuple))
+
+    print('')
+
+    query_color_block = \
+        colorimetry.utility.get_ansi_color_block_with_rgb_tuple_int(
+            query_rgb_tuple_int)
+
+    print(query_color_block * colorimetry.config.color.SWATCH_WIDTH)
+    print('')
+
+
+    # Print thresholds
+
+    print("Outlier thresholds:")
+    print('')
+
+    thresholds_info = colorimetry.config.color.THRESHOLDS._asdict()
+    thresholds_flat = sorted(thresholds_info.items())
+
+    for key, value in thresholds_flat:
+        print("{}: {:.02f}".format(key, value))
+
+    print('')
+
+
+    # Print outlier analysis
+
+    print("Outliers:")
+    print('')
+
+    outliers = \
+        colorimetry.color.classify_outliers_with_rgb_tuple_int(
+            query_rgb_tuple_int)
+
+    if outliers is None:
+        print("(None)")
+
+    else:
+        for key, value in sorted(outliers._asdict().items()):
+            print("{}: {}".format(key, value))
+
+    print('')
+
+
+    # Get distance from query to each presents
+
+    print("Proximities:")
+    print('')
+
+    try:
+        distances_and_names = \
+            colorimetry.color.find_color_proximities(
+                query_rgb_tuple_int)
+
+    except AssertionError as ae:
+        print("NO NEIGHBORS: {}".format(str(ae)))
+        print("<- This is fine if the color was classified as a black, white, "
+              "or grey above.")
+
+        print('')
+
+    else:
+        distances_and_names = sorted(distances_and_names)
+
+        for distance, preset_name in distances_and_names:
+
+            print("PRESET {:>6.02f}: {}".format(
+                  distance, colorimetry.preset.get_preset_swatch(preset_name)))
+
+        print('')
+
+
+    # Do match
+
+    print("Match:")
+    print('')
+
+    matched_name, \
+    group_name, \
+    group_css = \
+        colorimetry.color.find_nearest_color_name(
+            query_rgb_tuple_int)
+
+    print("Specific match color name (None if outlier): [{}]".format(
+          matched_name))
+
+    print("Group: NAME [{}] RGB [{}]".format(group_name, group_css))
+    print('')
+
+
+    # Calculate deltas
+
+    if args.preset_color_name is not None:
+        hue_delta, \
+        sat_delta, \
+        lum_delta = \
+            colorimetry.preset.get_deltas_between_hex_and_preset_color_name(
+                args.query_hex,
+                args.preset_color_name)
+
+        print("Hue delta: {}".format(hue_delta))
+        print("Saturation delta: {}".format(sat_delta))
+        print("Luminance delta: {}".format(lum_delta))
+        print('')
+
+
+_main()

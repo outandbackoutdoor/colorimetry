@@ -1,0 +1,6 @@
+colormath==3.0.0
+pyciede2000==0.0.21
+hsluv==5.0.4
+
+# Added just to squash warnings about it not being available
+matplotlib==3.10.1

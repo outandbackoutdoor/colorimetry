@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+
+import sys
+import argparse
+import math
+
+import hsluv
+
+import colorimetry.config.color
+import colorimetry.color
+import colorimetry.utility
+
+_DESCRIPTION = \
+    "Print a grid depecting all saturation and lightness/luminescence values " \
+    "for each hue."
+
+_STEP_SIZE = int(colorimetry.config.color.HSL_GRID_SQUARE_SIZE)
+_HUE_STEP_SIZE = 5
+
+_GRIDS_PER_ROW = 9
+
+_MAX_HSLUV_S = 100
+_MAX_HSLUV_L = 100
+
+# We double on the width in order to be form a square
+_COLUMN_MULTIPLIER = 2
+
+_GRID_HEIGHT = int(math.ceil(_MAX_HSLUV_S / _STEP_SIZE))
+_GRID_WIDTH = int(math.ceil(_MAX_HSLUV_L / _STEP_SIZE))
+
+def _get_args():
+    parser = \
+        argparse.ArgumentParser(
+            description=_DESCRIPTION)
+
+    colorimetry.utility.register_common_parameters(parser)
+
+    args = parser.parse_args()
+    return args
+
+def _build_grid(h):
+
+    # Rows represent increasing saturation
+
+    # The formatter for the grid header
+    header_format_ = '{:<' + str(_GRID_WIDTH * _COLUMN_MULTIPLIER) + '}'
+    header = header_format_.format(h)
+
+    row_parts = [
+        header,
+    ]
+
+    for s in range(0, _MAX_HSLUV_S, _STEP_SIZE):
+
+        # Columns represent increasing luminance
+
+        column_parts = []
+        for l in range(0, _MAX_HSLUV_L, _STEP_SIZE):
+            hsluv_tuple = (h, s, l)
+            r, g, b = hsluv.hsluv_to_rgb(hsluv_tuple)
+
+            r = int(r * 255)
+            g = int(g * 255)
+            b = int(b * 255)
+
+            rgb_tuple_int = (r, g, b)
+
+            color_block = \
+                colorimetry.utility.get_ansi_color_block_with_rgb_tuple_int(
+                    rgb_tuple_int)
+
+            column_parts.append(color_block * _COLUMN_MULTIPLIER)
+
+        row_parts.append(''.join(column_parts))
+
+    return row_parts
+
+def _main():
+    args = _get_args()
+
+    colorimetry.utility.handle_common_arguments(args)
+
+
+    # Build grids
+
+    grids = [
+        _build_grid(h)
+        for h
+        in range(0, 360, _HUE_STEP_SIZE)
+    ]
+
+
+    # Slice into rows and print one row at a time with some spacing in-between
+    # the adjacent grids
+
+    print("Saturation increases with row position. Luminance increases with "
+          "column position.")
+
+    print('')
+
+    print("({}) grids. Step-size is ({}). ({}) rows per grid. ({}) columns per "
+          "grid.".format(len(grids), _STEP_SIZE, _GRID_HEIGHT, _GRID_WIDTH))
+
+    print('')
+
+    for i in range(0, len(grids), _GRIDS_PER_ROW):
+        selected_grids = grids[i: i + _GRIDS_PER_ROW]
+
+        for i in range(_GRID_HEIGHT):
+            slice_ = [
+                grid[i]
+                for grid
+                in selected_grids
+            ]
+
+            printable_row = '  '.join(slice_)
+            print(printable_row)
+
+        print('')
+
+
+_main()

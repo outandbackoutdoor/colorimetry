@@ -1,0 +1,3 @@
+include ss/resources/*
+
+include ss/resources/test_sftp/*
