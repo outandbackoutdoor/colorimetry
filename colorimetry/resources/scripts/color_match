@@ -21,7 +21,7 @@ def _get_args():
     colorimetry.utility.register_common_parameters(parser)
 
     parser.add_argument(
-        'query_hex',
+        'query_rgb_phrase',
         help="Hex phrase to compare")
 
     parser.add_argument(
@@ -41,14 +41,14 @@ def _main():
 
     query_rgb_tuple_int = \
         colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(
-            args.query_hex)
+            args.query_rgb_phrase)
 
     query_hsluv_tuple = \
         colorimetry.color.get_hsluv_tuple_with_rgb_tuple_int(
             query_rgb_tuple_int)
 
     print("Query: {} -> RGB {} -> HSLuv {}".format(
-          args.query_hex, query_rgb_tuple_int, query_hsluv_tuple))
+          args.query_rgb_phrase, query_rgb_tuple_int, query_hsluv_tuple))
 
     print('')
 
@@ -100,7 +100,7 @@ def _main():
 
     try:
         distances_and_names = \
-            colorimetry.color.find_color_proximities(
+            colorimetry.color.find_nearby_color_distances_and_names(
                 query_rgb_tuple_int)
 
     except AssertionError as ae:
@@ -116,7 +116,7 @@ def _main():
         for distance, preset_name in distances_and_names:
 
             print("PRESET {:>6.02f}: {}".format(
-                  distance, colorimetry.preset.get_preset_swatch(preset_name)))
+                  distance, colorimetry.preset.get_preset_swatch_and_description(preset_name)))
 
         print('')
 
@@ -129,7 +129,7 @@ def _main():
     matched_name, \
     group_name, \
     group_css = \
-        colorimetry.color.find_nearest_color_name(
+        colorimetry.color.find_nearest_preset_colors_with_rgb_tuple_int(
             query_rgb_tuple_int)
 
     print("Specific match color name (None if outlier): [{}]".format(
@@ -145,8 +145,8 @@ def _main():
         hue_delta, \
         sat_delta, \
         lum_delta = \
-            colorimetry.preset.get_deltas_between_hex_and_preset_color_name(
-                args.query_hex,
+            colorimetry.preset.get_deltas_between_rgb_phrase_and_preset_color_name(
+                args.query_rgb_phrase,
                 args.preset_color_name)
 
         print("Hue delta: {}".format(hue_delta))

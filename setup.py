@@ -31,5 +31,7 @@ setuptools.setup(
     },
     install_requires=install_requires,
     scripts=[
+        'colorimetry/resources/scripts/color_hsluv_grids',
+        'colorimetry/resources/scripts/color_match',
     ],
 )

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 import argparse
 import math
 
@@ -17,8 +18,6 @@ _DESCRIPTION = \
 _STEP_SIZE = int(colorimetry.config.color.HSL_GRID_SQUARE_SIZE)
 _HUE_STEP_SIZE = 5
 
-_GRIDS_PER_ROW = 9
-
 _MAX_HSLUV_S = 100
 _MAX_HSLUV_L = 100
 
@@ -27,6 +26,7 @@ _COLUMN_MULTIPLIER = 2
 
 _GRID_HEIGHT = int(math.ceil(_MAX_HSLUV_S / _STEP_SIZE))
 _GRID_WIDTH = int(math.ceil(_MAX_HSLUV_L / _STEP_SIZE))
+_GRID_MARGIN = 2
 
 def _get_args():
     parser = \
@@ -98,13 +98,19 @@ def _main():
 
     print('')
 
-    print("({}) grids. Step-size is ({}). ({}) rows per grid. ({}) columns per "
-          "grid.".format(len(grids), _STEP_SIZE, _GRID_HEIGHT, _GRID_WIDTH))
+    terminal_size = os.get_terminal_size()
+    grids_per_row = int(terminal_size.columns // (_GRID_WIDTH * _COLUMN_MULTIPLIER + _GRID_MARGIN))
+
+    print("({}) grids. ({}) grids will be printed per row. Step-size is ({}). "
+          "({}) rows per grid. ({}) columns per grid.".format(
+          len(grids), grids_per_row, _STEP_SIZE, _GRID_HEIGHT, _GRID_WIDTH))
 
     print('')
 
-    for i in range(0, len(grids), _GRIDS_PER_ROW):
-        selected_grids = grids[i: i + _GRIDS_PER_ROW]
+    grid_spacer = ' ' * _GRID_MARGIN
+
+    for i in range(0, len(grids), grids_per_row):
+        selected_grids = grids[i: i + grids_per_row]
 
         for i in range(_GRID_HEIGHT):
             slice_ = [
@@ -113,7 +119,7 @@ def _main():
                 in selected_grids
             ]
 
-            printable_row = '  '.join(slice_)
+            printable_row = grid_spacer.join(slice_)
             print(printable_row)
 
         print('')
