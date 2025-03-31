@@ -106,7 +106,7 @@ def _main():
     except AssertionError as ae:
         print("NO NEIGHBORS: {}".format(str(ae)))
         print("<- This is fine if the color was classified as a black, white, "
-              "or grey above.")
+              "or gray above.")
 
         print('')
 

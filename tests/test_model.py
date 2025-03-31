@@ -58,7 +58,7 @@ _LAB_TUPLE_FLOAT__DEEPSKYBLUE = \
         _RGB_TUPLE_INT__DEEPSKYBLUE)
 
 
-_RGB_TUPLE_INT__GREY = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(colorimetry.constant.COLOR_CSS_GREY)
+_RGB_TUPLE_INT__GRAY = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(colorimetry.constant.COLOR_CSS_GRAY)
 
 
 class Test(colorimetry.testing_support.TestBase):
@@ -90,7 +90,7 @@ class Test(colorimetry.testing_support.TestBase):
 
         labcie_float_tuple = \
             convert_rgb_to_labcie(
-                _RGB_TUPLE_INT__GREY)
+                _RGB_TUPLE_INT__GRAY)
 
         labcie_int_tuple = \
             self._get_float_tuple_as_integers100(

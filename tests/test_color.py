@@ -12,7 +12,7 @@ _RGB_PHRASE_BLUE = '#0000ff'
 
 _RGB_TUPLE_INT__BLACK = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(colorimetry.constant.COLOR_CSS_BLACK)
 _RGB_TUPLE_INT__WHITE = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(colorimetry.constant.COLOR_CSS_WHITE)
-_RGB_TUPLE_INT__GREY = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(colorimetry.constant.COLOR_CSS_GREY)
+_RGB_TUPLE_INT__GRAY = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(colorimetry.constant.COLOR_CSS_GRAY)
 
 
 class Test(colorimetry.testing_support.TestBase):
@@ -118,18 +118,18 @@ class Test(colorimetry.testing_support.TestBase):
     def test_classify_outliers_with_rgb_tuple_int(self):
 
         outliers = colorimetry.color.classify_outliers_with_rgb_tuple_int(_RGB_TUPLE_INT__BLACK)
-        self.assertEquals(outliers, colorimetry.color._OUTLIER_FLAGS(is_black=True, is_grey=True, is_white=False))
+        self.assertEquals(outliers, colorimetry.color._OUTLIER_FLAGS(is_black=True, is_gray=True, is_white=False))
 
 
         outliers = colorimetry.color.classify_outliers_with_rgb_tuple_int(_RGB_TUPLE_INT__WHITE)
-        self.assertEquals(outliers, colorimetry.color._OUTLIER_FLAGS(is_black=False, is_grey=True, is_white=True))
+        self.assertEquals(outliers, colorimetry.color._OUTLIER_FLAGS(is_black=False, is_gray=True, is_white=True))
 
 
-        grey_rgb_phrase = colorimetry.binding.DEFAULT_COLOR_NAMES_TO_RGB_PHRASES[colorimetry.constant.COLOR_NAME_GREY]
-        rgb_tuple_int__grey = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(grey_rgb_phrase)
+        gray_rgb_phrase = colorimetry.binding.DEFAULT_COLOR_NAMES_TO_RGB_PHRASES[colorimetry.constant.COLOR_NAME_GRAY]
+        rgb_tuple_int__gray = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(gray_rgb_phrase)
 
-        outliers = colorimetry.color.classify_outliers_with_rgb_tuple_int(rgb_tuple_int__grey)
-        self.assertEquals(outliers, colorimetry.color._OUTLIER_FLAGS(is_black=False, is_grey=True, is_white=False))
+        outliers = colorimetry.color.classify_outliers_with_rgb_tuple_int(rgb_tuple_int__gray)
+        self.assertEquals(outliers, colorimetry.color._OUTLIER_FLAGS(is_black=False, is_gray=True, is_white=False))
 
 
         rgb_tuple_int__red = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(_RGB_PHRASE_RED)
@@ -194,19 +194,19 @@ class Test(colorimetry.testing_support.TestBase):
         self.assertEquals(group_name, colorimetry.constant.COLOR_NAME_WHITE)
         self.assertEquals(group_css, colorimetry.constant.COLOR_CSS_WHITE)
 
-        # Grey
+        # Gray
 
         nearest_name, \
         group_name, \
         group_css = \
             colorimetry.color.find_nearest_preset_colors_with_rgb_tuple_int(
-                _RGB_TUPLE_INT__GREY)
+                _RGB_TUPLE_INT__GRAY)
 
         # Outlier colors don't return a nearest name
         self.assertIsNone(nearest_name)
 
-        self.assertEquals(group_name, colorimetry.constant.COLOR_NAME_GREY)
-        self.assertEquals(group_css, colorimetry.constant.COLOR_CSS_GREY)
+        self.assertEquals(group_name, colorimetry.constant.COLOR_NAME_GRAY)
+        self.assertEquals(group_css, colorimetry.constant.COLOR_CSS_GRAY)
 
         # A color with some actual color. A grayish blue.
 

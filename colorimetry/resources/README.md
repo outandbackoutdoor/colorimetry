@@ -7,7 +7,7 @@ project).
 
 # Algorithm
 
-1. Determine if the color is black, white, or grey. If so, return that name and
+1. Determine if the color is black, white, or gray. If so, return that name and
    the configured CSS color for it.
 
 2. Convert the color to the HSLuv color model, and identify all standard colors
@@ -36,11 +36,11 @@ and group of a given color.
 `get_nearby_colors_with_rgb_tuple_int()`
 
 Returns colors considered to be similar to the queries color. The 'best' match
-will come from this group (if it's not just black, white, or grey).
+will come from this group (if it's not just black, white, or gray).
 
 `classify_outliers_with_rgb_tuple_int()`
 
-Classifies the given color as black, white, or grey. If none of these apply,
+Classifies the given color as black, white, or gray. If none of these apply,
 then returns None. Depends on thresholds config in `colorimetry.config.color`.
 
 `find_nearby_color_distances_and_names()`
@@ -87,7 +87,7 @@ The max hue difference to consider for neighbors of the searched colors.
 
 `THRESHOLDS`
 
-The various thresholds used to identify black, white, and grey colors.
+The various thresholds used to identify black, white, and gray colors.
 
 ## colorimetry.binding
 

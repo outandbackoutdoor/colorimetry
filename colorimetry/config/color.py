@@ -16,7 +16,7 @@ _THRESHOLDS_CLS = \
             'black_lum_max',
             'white_sat_max',
             'white_lum_min',
-            'grey_sat_max',
+            'gray_sat_max',
         ])
 
 THRESHOLDS = \
@@ -32,5 +32,5 @@ THRESHOLDS = \
         black_lum_max=2.0 / HSL_GRID_SQUARE_SIZE * 100.0,
         white_sat_max=2.0 / HSL_GRID_SQUARE_SIZE * 100.0,
         white_lum_min=9.0 / HSL_GRID_SQUARE_SIZE * 100.0,
-        grey_sat_max=1.0 / HSL_GRID_SQUARE_SIZE * 100.0,
+        gray_sat_max=1.0 / HSL_GRID_SQUARE_SIZE * 100.0,
     )

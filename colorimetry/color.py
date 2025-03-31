@@ -19,7 +19,7 @@ _OUTLIER_FLAGS = \
 
             # Specified in the order in which they should be checked
             'is_black',
-            'is_grey',
+            'is_gray',
             'is_white',
         ])
 
@@ -133,11 +133,11 @@ def classify_outliers_with_rgb_tuple_int(color_rgb_tuple_int):
         _OUTLIER_FLAGS(
             is_black=l <= colorimetry.config.color.THRESHOLDS.black_lum_max,
             is_white=s <= colorimetry.config.color.THRESHOLDS.white_sat_max and l >= colorimetry.config.color.THRESHOLDS.white_lum_min,
-            is_grey=s <= colorimetry.config.color.THRESHOLDS.grey_sat_max)
+            is_gray=s <= colorimetry.config.color.THRESHOLDS.gray_sat_max)
 
     if outliers.is_black is False and \
        outliers.is_white is False and \
-       outliers.is_grey is False:
+       outliers.is_gray is False:
         return None
 
     return outliers
@@ -214,11 +214,11 @@ def find_nearest_preset_colors_with_rgb_tuple_int(match_rgb_tuple_int):
                 colorimetry.constant.COLOR_NAME_WHITE, \
                 colorimetry.constant.COLOR_CSS_WHITE
 
-        elif outliers.is_grey is True:
+        elif outliers.is_gray is True:
             return \
                 None, \
-                colorimetry.constant.COLOR_NAME_GREY, \
-                colorimetry.constant.COLOR_CSS_GREY
+                colorimetry.constant.COLOR_NAME_GRAY, \
+                colorimetry.constant.COLOR_CSS_GRAY
 
 
     distances_and_names = \
