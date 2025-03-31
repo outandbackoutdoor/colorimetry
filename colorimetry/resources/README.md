@@ -127,8 +127,8 @@ distance.
 
 `color_hsluv_grids`
 
-Display one ANSI grid with all S and all L for every hue. This supports
-investigating matches and nearby colors.
+Step through hues at even intervals and display one ANSI grid with all S and
+all L for that hue. This supports investigating matches and nearby colors.
 
 
 # Screenshots
