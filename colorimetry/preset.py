@@ -32,6 +32,16 @@ def get_deltas_between_rgb_phrase_and_preset_color_name(
 
     return hue_delta, sat_delta, lum_delta
 
+def get_preset_rgb_phrase(preset_name):
+    """Return the RGB phrase for the preset color name."""
+
+# TODO(dustin): Add test
+
+    preset_rgb_phrase = \
+        colorimetry.binding.DEFAULT_COLOR_NAMES_TO_RGB_PHRASES[
+            preset_name]
+
+    return preset_rgb_phrase
 
 def get_preset_swatch_and_description(preset_name):
     """Return an ANSI block with the color of the given name."""
