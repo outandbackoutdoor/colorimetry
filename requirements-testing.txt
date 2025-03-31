@@ -1,1 +1,1 @@
-obocolor/resources/requirements-testing.txt
+colorimetry/resources/requirements-testing.txt
