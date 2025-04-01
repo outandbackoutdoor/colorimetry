@@ -4,3 +4,6 @@ hsluv==5.0.4
 
 # Added just to squash warnings about it not being available
 matplotlib==3.10.1
+
+# TODO(dustin): We need this, but we're waiting on PRs
+colour-science==0.4.6
