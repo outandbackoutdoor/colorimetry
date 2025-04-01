@@ -26,7 +26,6 @@ CSS3_NAMES_TO_RGB_PHRASES = {
     'cornsilk': '#fff8dc',
     'crimson': '#dc143c',
 
-    'cyan': '#00ffff',
     'darkblue': '#00008b',
     'darkcyan': '#008b8b',
     'darkgoldenrod': '#b8860b',
@@ -91,7 +90,6 @@ CSS3_NAMES_TO_RGB_PHRASES = {
     'lime': '#00ff00',
     'limegreen': '#32cd32',
     'linen': '#faf0e6',
-    'magenta': '#ff00ff',
     'maroon': '#800000',
     'mediumaquamarine': '#66cdaa',
     'mediumblue': '#0000cd',
@@ -160,8 +158,8 @@ CSS3_NAMES_TO_RGB_PHRASES = {
     'yellowgreen': '#9acd32',
 
 
-    # We favor the "gray" spelling. Eliminated these will remove nondeterminism
-    # in the colors we pick since these have the same RGB.
+    # We favor the "gray" spelling. Eliminated these so as to not introduce
+    # nondeterminism in the colors we pick (since these have the same RGB).
 
     # 'darkgrey': '#a9a9a9',
     # 'darkslategrey': '#2f4f4f',
@@ -170,7 +168,36 @@ CSS3_NAMES_TO_RGB_PHRASES = {
     # 'lightgrey': '#d3d3d3',
     # 'lightslategrey': '#778899',
     # 'slategrey': '#708090',
+
+
+    # Not grays, but they still duplicate the RGBs:
+
+    # 'cyan': '#00ffff',
+    # 'magenta': '#ff00ff',
 }
+
+
+# Confirm no duplication in colors, which would make our choices
+# nondeterministic.
+
+_VISITED_RGB_PHRASES = {}
+for name, css in CSS3_NAMES_TO_RGB_PHRASES.items():
+    css = css.lower()
+
+    try:
+        previous_name = _VISITED_RGB_PHRASES[css]
+
+    except KeyError:
+        pass
+
+    else:
+        raise \
+            Exception(
+                "RGB [{}] is associated with both CSS names [{}] and "
+                "[{}].".format(css, previous_name, name))
+
+
+    _VISITED_RGB_PHRASES[css] = name
 
 
 # Granular CSS colors grouped by major colors
