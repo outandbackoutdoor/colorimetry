@@ -1,0 +1,3 @@
+#!/bin/bash
+
+xhtml2pdf swatches/palette.html swatches/palette.pdf

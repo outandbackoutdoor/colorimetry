@@ -7,3 +7,9 @@ matplotlib==3.10.1
 
 # TODO(dustin): We need this, but we're waiting on PRs
 colour-science==0.4.6
+
+# Supports swatch image generation
+pillow==9.4.0
+
+tabulate==0.8.10
+xhtml2pdf==0.2.17

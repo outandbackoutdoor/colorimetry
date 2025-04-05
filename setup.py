@@ -33,5 +33,6 @@ setuptools.setup(
     scripts=[
         'colorimetry/resources/scripts/color_hsluv_grids',
         'colorimetry/resources/scripts/color_match',
+        'colorimetry/resources/scripts/color_standard_generate_reference',
     ],
 )

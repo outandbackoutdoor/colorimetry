@@ -1,0 +1,294 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import argparse
+import io
+import shutil
+
+import tabulate
+
+import markdown_pdf
+
+import marko
+
+import reportlab.lib.pagesizes
+import reportlab.pdfgen.canvas
+
+import PIL.Image
+
+import colorimetry.css
+import colorimetry.utility
+
+_DESCRIPTION = "Generate swatch images for standard colors."
+
+_SWATCH_RESOLUTION = (200, 200)
+
+_SWATCH_IMAGE_SUFFIX = '.png'
+_IMAGES_REL_PATH = 'images'
+_GROUP_IMAGES_REL_PATH = 'groups'
+_MEMBERS_IMAGES_REL_PATH = 'members'
+
+_MEMBER_GROUP_MARKDOWN_TABLE_HEADERS = [
+    '',
+    '',
+]
+
+_GROUPS_MARKDOWN_TABLE_HEADERS = [
+    '',
+    '',
+    '',
+]
+
+
+def _get_args():
+    parser = \
+        argparse.ArgumentParser(
+            description=_DESCRIPTION)
+
+    colorimetry.utility.register_common_parameters(parser)
+
+    parser.add_argument(
+        'output_path',
+        help="Path to write to")
+
+    args = parser.parse_args()
+    return args
+
+def _print(message):
+    print(message, file=sys.stderr)
+
+
+def _write_swatch(color_css, filepath):
+
+    rgb_tuple = colorimetry.utility.get_rgb_tuple_int_with_rgb_phrase(color_css)
+
+    # Creates a new RGB image with size 500x500 and black background
+    image = PIL.Image.new("RGB", _SWATCH_RESOLUTION, rgb_tuple)
+
+    # Saves the image
+    image.save(filepath)
+
+
+def _write_member_swatch(
+        output_path, member_images_rel_path, member_color_name,
+        member_color_css):
+
+    # Write swatch image
+
+    member_image_filename = member_color_name + _SWATCH_IMAGE_SUFFIX
+
+    member_image_filepath = \
+        os.path.join(
+            output_path,
+            member_images_rel_path,
+            member_image_filename)
+
+    _write_swatch(member_color_css, member_image_filepath)
+
+
+    # Generate Markdown fragment
+
+    member_images_url_path = \
+        os.path.join(
+            member_images_rel_path,
+            member_image_filename)
+
+    member_image_markdown = \
+        '![{member_color_name}]({member_images_url_path} "{member_color_css}")'.format(
+        member_color_name=member_color_name,
+        member_images_url_path=member_images_url_path,
+        member_color_css=member_color_css)
+
+
+    return (member_image_markdown, member_color_name)
+
+
+def _write_group(
+        output_path, group_color_name, group_color_css, member_names):
+
+    _print("Writing swatches: [{}]".format(group_color_name))
+
+
+    # Write group image
+
+    group_images_rel_path = \
+        os.path.join(
+            _IMAGES_REL_PATH,
+            _GROUP_IMAGES_REL_PATH)
+
+    group_images_path = \
+        os.path.join(
+            output_path,
+            group_images_rel_path)
+
+    if os.path.exists(group_images_path) is False:
+        os.makedirs(group_images_path)
+
+
+    group_image_filename = group_color_name + _SWATCH_IMAGE_SUFFIX
+    group_image_filepath = os.path.join(group_images_path, group_image_filename)
+
+    group_image_url_filepath = \
+        os.path.join(
+            group_images_rel_path,
+            group_image_filename)
+
+    group_image_markdown = \
+        '![{group_color_name}]({group_image_url_filepath} "{group_color_css}")'.format(
+        group_color_name=group_color_name,
+        group_image_url_filepath=group_image_url_filepath,
+        group_color_css=group_color_css)
+
+    _write_swatch(group_color_css, group_image_filepath)
+
+
+    # Write member swatches
+
+    member_images_rel_path = \
+        os.path.join(
+            _IMAGES_REL_PATH,
+            _MEMBERS_IMAGES_REL_PATH,
+            group_color_name)
+
+    member_images_path = \
+        os.path.join(
+            output_path,
+            member_images_rel_path)
+
+    if os.path.exists(member_images_path) is False:
+        os.makedirs(member_images_path)
+
+
+    # Make sure that the output is as consistent between invocations as we
+    # can make it
+    member_names = sorted(member_names)
+
+    member_color_names_and_csses = \
+        map(
+            lambda member_name: (
+                member_name,
+                colorimetry.css.CSS3_NAMES_TO_RGB_PHRASES[member_name],
+            ),
+
+            member_names)
+
+    lines = []
+    for member_color_name, member_color_css in member_color_names_and_csses:
+        line = \
+            _write_member_swatch(
+                output_path,
+                member_images_rel_path,
+                member_color_name,
+                member_color_css)
+
+        lines.append(line)
+
+
+    members_table_markdown = \
+        tabulate.tabulate(
+            lines,
+
+            # Required for the render
+            headers=_MEMBER_GROUP_MARKDOWN_TABLE_HEADERS,
+
+            tablefmt='github')
+
+
+    section_header = """\
+## {group_color_name} ({group_color_css})
+
+""".format(
+group_color_name=group_color_name,
+group_color_css=group_color_css)
+
+    member_section_markdown = \
+        section_header + \
+        members_table_markdown + \
+        '\n---\n'
+
+
+    return group_image_markdown, member_section_markdown
+
+
+def _main():
+    args = _get_args()
+
+    colorimetry.utility.handle_common_arguments(args)
+
+
+    # Render members Markdown
+
+    groups = colorimetry.css._CSS3_COLOR_GROUPS.keys()
+    groups = sorted(groups)
+
+    groups_body_lines = []
+    members_section_markdown_content = ''
+    for group_key in groups:
+        group_color_name, group_color_css = group_key
+
+        member_names = colorimetry.css._CSS3_COLOR_GROUPS[group_key]
+
+        group_image_markdown, \
+        palette_document_fragment = \
+            _write_group(
+                args.output_path,
+                group_color_name,
+                group_color_css,
+                member_names)
+
+
+        groups_body_lines.append((
+            group_image_markdown,
+            group_color_name,
+            group_color_css,
+        ))
+
+        members_section_markdown_content += palette_document_fragment + '\\\n'
+
+
+    members_header_markdown_content = """\
+# Group Member Colors
+
+"""
+
+
+    # Render groups Markdown (depends on previous)
+
+    groups_header_markdown_content = """\
+# Groups Colors (Summary)
+
+"""
+
+    groups_table_markdown_content = \
+        tabulate.tabulate(
+            groups_body_lines,
+
+            # Required for the render
+            headers=_GROUPS_MARKDOWN_TABLE_HEADERS,
+
+            # Alignment is not support with the 'github' output
+            tablefmt='github')
+
+
+    groups_body_markdown_content = groups_table_markdown_content + '\n---\n'
+
+
+    # Assemble root document
+
+    markdown_content = \
+        groups_header_markdown_content + \
+        groups_body_markdown_content + \
+        members_header_markdown_content + \
+        members_section_markdown_content
+
+
+    # Render HTML
+
+    m = marko.Markdown(extensions=['gfm'])
+    html_content = m.convert(markdown_content)
+
+    print(html_content)
+
+
+_main()
