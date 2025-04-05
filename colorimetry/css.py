@@ -256,7 +256,8 @@ _CSS3_COLOR_GROUPS = {
         'darkolivegreen',
         'darkseagreen',
         'darkslategray',
-        'darkslategrey',
+# Commented above
+        # 'darkslategrey',
         'forestgreen',
         'green',
         'greenyellow',
@@ -285,7 +286,10 @@ _CSS3_COLOR_GROUPS = {
         'blue',
         'cadetblue',
         'cornflowerblue',
-        'cyan',
+
+# Commented above
+        # 'cyan',
+
         'darkblue',
         'darkcyan',
         'darkturquoise',
@@ -316,7 +320,10 @@ _CSS3_COLOR_GROUPS = {
         'fuchsia',
         'indigo',
         'lavender',
-        'magenta',
+
+# Commented above
+        # 'magenta',
+
         'mediumorchid',
         'mediumpurple',
         'mediumslateblue',
@@ -324,7 +331,6 @@ _CSS3_COLOR_GROUPS = {
         'orchid',
         'plum',
         'purple',
-        'rebeccapurple',
         'slateblue',
         'thistle',
         'violet',
@@ -350,26 +356,28 @@ _CSS3_COLOR_GROUPS = {
 
     (colorimetry.constant.COLOR_NAME_GRAY, colorimetry.constant.COLOR_CSS_GRAY): [
         'darkgray',
-        'darkgrey',
         'dimgray',
-        'dimgrey',
         'floralwhite',
         'gainsboro',
         'ghostwhite',
         'gray',
-        'grey',
         'ivory',
         'lightgray',
-        'lightgrey',
         'lightslategray',
-        'lightslategrey',
         'mintcream',
         'seashell',
         'silver',
         'slategray',
-        'slategrey',
         'snow',
         'whitesmoke',
+
+# # Commented above
+#         'darkgrey',
+#         'dimgrey',
+#         'grey',
+#         'lightgrey',
+#         'lightslategrey',
+#         'slategrey',
     ],
 
     (colorimetry.constant.COLOR_NAME_WHITE, colorimetry.constant.COLOR_CSS_WHITE): [
