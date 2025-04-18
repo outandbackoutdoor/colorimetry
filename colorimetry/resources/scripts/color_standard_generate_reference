@@ -276,6 +276,8 @@ def _main():
 
     # Assemble root document
 
+# TODO(dustin): Include a title. Include a timestamp.
+
     markdown_content = \
         groups_header_markdown_content + \
         groups_body_markdown_content + \
